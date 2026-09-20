@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>🎈 連線遊戲生成器 🎈</title>
+    <title>🎈 可愛連線學習單產生器 🎈</title>
     <!-- 引入 jsPDF 用於產生 PDF 檔案 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
@@ -47,12 +48,16 @@
             outline: none; background: #fff9f2; color: #5d4037; cursor: pointer;
         }
 
+        .btn-group {
+            display: flex; width: 100%; justify-content: center; gap: 20px; margin-top: 5px;
+        }
+
         .btn {
-            border: none; padding: 12px 20px; font-size: 18px; font-weight: 900;
+            border: none; padding: 12px 25px; font-size: 18px; font-weight: 900;
             border-radius: 20px; cursor: pointer; transition: transform 0.1s;
             color: white; font-family: 'Nunito', 'Microsoft JhengHei', sans-serif;
         }
-        .btn-preview { background-color: #4ecdc4; box-shadow: 0 5px 0px #3baba3; margin-left: auto; }
+        .btn-preview { background-color: #4ecdc4; box-shadow: 0 5px 0px #3baba3; }
         .btn-preview:active { transform: translateY(5px); box-shadow: 0 0px 0px #3baba3; }
         .btn-download { background-color: #ff6b6b; box-shadow: 0 5px 0px #e05252; }
         .btn-download:active { transform: translateY(5px); box-shadow: 0 0px 0px #e05252; }
@@ -69,7 +74,7 @@
 </head>
 <body>
 
-    <h1>🎈 連線遊戲生成器 🎈</h1>
+    <h1>🎈 可愛連線學習單產生器 🎈</h1>
 
     <div class="container">
         <div class="controls-container">
@@ -84,9 +89,9 @@
             <div class="control-item">
                 <label>🌟</label>
                 <select id="difficulty">
-                    <option value="12">簡單 (12點內)</option>
-                    <option value="20">普通 (20點內)</option>
-                    <option value="30">困難 (30點以上)</option>
+                    <option value="8">簡單 (8點內)</option>
+                    <option value="15">一般 (15點內)</option>
+                    <option value="26">困難 (26點內)</option>
                 </select>
             </div>
             <div class="control-item">
@@ -97,8 +102,11 @@
                     <option value="food">🍎 美味點心</option>
                 </select>
             </div>
-            <button class="btn btn-preview" onclick="generatePreview()">🎲 換一張圖</button>
-            <button class="btn btn-download" onclick="downloadPDF()">⬇️ 下載 A4 橫向 PDF</button>
+            
+            <div class="btn-group">
+                <button class="btn btn-preview" onclick="generatePreview()">🎲 換一張圖</button>
+                <button class="btn btn-download" onclick="downloadPDF()">⬇️ 下載 A4 橫向 PDF</button>
+            </div>
         </div>
 
         <div class="preview-container">
@@ -112,11 +120,9 @@
         const ctx = canvas.getContext('2d');
         let currentItem = null;
 
-        // 可愛風的列印線條顏色 (柔和的深褐色與粉色)
         const outlineColor = '#a89f91'; 
         const dotColor = '#5d4037';
 
-        // 圖案資料庫
         const categories = {
             animal: [
                 {
@@ -223,20 +229,16 @@
         }
 
         function drawWorksheet(item, numPoints, mode) {
-            // 背景塗白 (PDF 列印需求)
             ctx.fillStyle = '#ffffff';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // --- 繪製可愛虛線外框 ---
             ctx.strokeStyle = '#ffdfb3';
             ctx.lineWidth = 15;
             ctx.setLineDash([30, 25]);
             ctx.lineCap = 'round';
             ctx.strokeRect(50, 50, canvas.width - 100, canvas.height - 100);
-            ctx.setLineDash([]); // 恢復實線
+            ctx.setLineDash([]);
 
-            // --- 繪製標題與填寫欄位 ---
-            // 使用童趣圓體字型
             ctx.fillStyle = '#ff8c42';
             ctx.font = 'bold 70px "Comic Sans MS", "ZCOOL KuaiLe", "Microsoft JhengHei", sans-serif';
             ctx.textAlign = 'center';
@@ -254,36 +256,29 @@
             ctx.strokeStyle = '#f3e5f5';
             ctx.beginPath(); ctx.moveTo(100, 320); ctx.lineTo(canvas.width - 100, 320); ctx.stroke();
 
-            // --- 繪製連線圖案 ---
             const points = getPointsFromPath(item.path, numPoints);
 
             ctx.save();
-            // 放寬橫向空間：設定縮放比例為 2.1 倍
             const scale = 2.1;
             const offsetX = (canvas.width - 400 * scale) / 2;
             const offsetY = 330; 
             ctx.translate(offsetX, offsetY);
             ctx.scale(scale, scale);
 
-            // 1. 畫可愛內部特徵 (圓滑線條)
             ctx.strokeStyle = outlineColor;
             ctx.lineWidth = 5;
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
             item.drawInner(ctx);
 
-            // 2. 畫連線的點與圓潤標籤
             points.forEach((pt, index) => {
-                // 畫可愛圓點
                 ctx.beginPath();
                 ctx.arc(pt.x, pt.y, 5, 0, Math.PI * 2);
                 ctx.fillStyle = dotColor;
                 ctx.fill();
                 
-                // 畫標題
                 ctx.font = '900 18px "Nunito", "Comic Sans MS", sans-serif';
                 ctx.fillStyle = dotColor;
-                // 將文字稍微往外推
                 const centerX = 200, centerY = 200;
                 const angle = Math.atan2(pt.y - centerY, pt.x - centerX);
                 const textX = pt.x + Math.cos(angle) * 16;
@@ -296,23 +291,19 @@
             ctx.restore();
         }
 
-        // jsPDF 下載 (A4 橫向)
         function downloadPDF() {
             if (!currentItem) return;
             
             const { jsPDF } = window.jspdf;
-            // 'l' 代表 landscape (橫向)，單位 pt，尺寸 A4
             const pdf = new jsPDF('l', 'pt', 'a4');
-            
             const imgData = canvas.toDataURL('image/jpeg', 1.0);
             
-            // A4 橫向尺寸約為 841.89 x 595.28 pt
             pdf.addImage(imgData, 'JPEG', 0, 0, 841.89, 595.28);
             pdf.save(`可愛連線學習單_${currentItem.name}.pdf`);
         }
 
-        // 載入字體需要一點時間，設定微小延遲確保字體載入後再繪製
         window.onload = () => setTimeout(generatePreview, 300);
     </script>
 </body>
 </html>
+
