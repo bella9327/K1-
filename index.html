@@ -7,164 +7,80 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&display=swap');
 
-        * {
-            box-sizing: border-box;
-            user-select: none;
-            -webkit-user-select: none;
-            -webkit-tap-highlight-color: transparent;
-        }
+        * { box-sizing: border-box; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; }
 
         body {
             font-family: 'Nunito', 'Microsoft JhengHei', sans-serif;
-            background-color: #fff4e6;
-            background-image: radial-gradient(#ffdfb3 2px, transparent 0);
-            background-size: 30px 30px;
-            margin: 0;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            color: #5c4033;
+            background-color: #f4f6f8;
+            margin: 0; padding: 15px;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh; color: #333;
         }
 
-        h1 {
-            font-size: 28px;
-            color: #ff8c42;
-            text-shadow: 2px 2px 0px #fff;
-            margin: 10px 0 20px 0;
-        }
+        h1 { font-size: 26px; color: #4a4a4a; margin: 10px 0 20px 0; }
 
         .controls-container {
-            background-color: #ffffff;
-            border: 4px solid #ffdfb3;
-            border-radius: 20px;
-            padding: 15px 25px;
-            box-shadow: 0 8px 15px rgba(255, 140, 66, 0.1);
-            margin-bottom: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            width: 100%;
-            max-width: 400px;
+            background-color: #ffffff; border-radius: 15px; padding: 15px 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08); margin-bottom: 15px;
+            display: flex; flex-direction: column; gap: 12px;
+            width: 100%; max-width: 400px;
         }
 
-        .control-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-weight: bold;
-            font-size: 16px;
-        }
-
-        select {
-            padding: 8px 12px;
-            border-radius: 12px;
-            border: 2px solid #ffcc99;
-            background-color: #fff9f2;
-            font-family: inherit;
-            font-weight: bold;
-            color: #5c4033;
-            outline: none;
-            cursor: pointer;
-        }
+        .control-row { display: flex; justify-content: space-between; align-items: center; font-weight: bold; }
+        select { padding: 6px 10px; border-radius: 8px; border: 2px solid #ddd; font-family: inherit; font-weight: bold; outline: none; }
 
         .btn-start {
-            background-color: #ff8c42;
-            color: white;
-            border: none;
-            padding: 12px;
-            font-size: 18px;
-            font-weight: 900;
-            border-radius: 15px;
-            cursor: pointer;
-            box-shadow: 0 5px 0px #e06c22;
-            transition: transform 0.1s, box-shadow 0.1s;
-            margin-top: 5px;
+            background-color: #ff7675; color: white; border: none; padding: 12px;
+            font-size: 18px; font-weight: 900; border-radius: 12px; cursor: pointer;
+            box-shadow: 0 4px 0px #d63031; transition: transform 0.1s; margin-top: 5px;
         }
-
-        .btn-start:active {
-            transform: translateY(5px);
-            box-shadow: 0 0px 0px #e06c22;
-        }
+        .btn-start:active { transform: translateY(4px); box-shadow: 0 0px 0px #d63031; }
 
         #game-container {
-            position: relative;
-            width: 100%;
-            max-width: 400px;
-            aspect-ratio: 1 / 1;
-            background-color: #ffffff;
-            border: 5px solid #ffcc99;
-            border-radius: 25px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
-            overflow: hidden;
+            position: relative; width: 100%; max-width: 400px; aspect-ratio: 1 / 1;
+            background-color: #ffffff; border: 4px solid #fff; border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1); overflow: hidden;
         }
 
-        canvas {
-            width: 100%;
-            height: 100%;
-            touch-action: none; /* 防止手機滑動干擾遊戲 */
-            cursor: crosshair;
-        }
+        canvas { width: 100%; height: 100%; touch-action: none; cursor: crosshair; }
 
         .modal {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(255, 255, 255, 0.9);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 10;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255, 255, 255, 0.85); display: flex; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 10;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
         }
-
-        .modal.show {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .modal h2 {
-            font-size: 32px;
-            color: #ff6b6b;
-            margin-bottom: 10px;
-            animation: pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        @keyframes pop {
-            0% { transform: scale(0.5); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
+        .modal.show { opacity: 1; pointer-events: auto; }
+        .modal h2 { font-size: 30px; color: #0984e3; animation: pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes pop { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
     </style>
 </head>
 <body>
 
-    <h1>🎈 齊來連線遊戲 🎈</h1>
+    <h1>🎈 齊來連線畫冊 🎈</h1>
 
     <div class="controls-container">
         <div class="control-row">
-            <label>🔡 學習模式：</label>
+            <label>🔡 模式：</label>
             <select id="mode">
-                <option value="number">123 數字版</option>
-                <option value="letter">ABC 字母版</option>
+                <option value="number">123 數字</option>
+                <option value="letter">ABC 字母</option>
             </select>
         </div>
         <div class="control-row">
-            <label>🌟 挑戰程度：</label>
+            <label>🌟 程度：</label>
             <select id="difficulty">
-                <option value="10">🌱 簡單 (10個點)</option>
-                <option value="15">🌲 普通 (15個點)</option>
-                <option value="20">🌋 困難 (20個點)</option>
+                <option value="10">簡單 (10點)</option>
+                <option value="15">普通 (15點)</option>
+                <option value="20">困難 (20點)</option>
             </select>
         </div>
         <div class="control-row">
-            <label>🎨 圖案主題：</label>
+            <label>🎨 主題：</label>
             <select id="theme">
-                <option value="animal">🐻 可愛動物</option>
-                <option value="vehicle">🚗 交通工具</option>
-                <option value="food">🍎 美味食物</option>
+                <option value="animal">🦉 貓頭鷹 (動物)</option>
+                <option value="vehicle">🚗 小汽車 (交通)</option>
+                <option value="food">🍎 蘋果 (食物)</option>
             </select>
         </div>
         <button class="btn-start" onclick="startGame()">🚀 開始連線</button>
@@ -173,7 +89,7 @@
     <div id="game-container">
         <canvas id="gameCanvas" width="400" height="400"></canvas>
         <div id="success-modal" class="modal">
-            <h2>✨ 太棒了！完成啦！ ✨</h2>
+            <h2>✨ 太棒了！ ✨</h2>
         </div>
     </div>
 
@@ -185,39 +101,72 @@
         let points = [];
         let currentTarget = 0;
         let gameMode = 'number';
-        let themeColor = '#ff8c42';
+        let currentThemeKey = 'animal';
 
-        // 預設的圖案 SVG 路徑 (基準尺寸 400x400)
         const themes = {
             animal: {
-                path: "M 200 320 C 100 320 70 250 70 170 C 70 120 90 80 120 70 C 140 60 170 80 190 110 C 200 110 200 110 210 110 C 230 80 260 60 280 70 C 310 80 330 120 330 170 C 330 250 300 320 200 320 Z",
-                color: '#d4a373' // 熊熊的顏色
+                // 貓頭鷹外部輪廓
+                path: "M 160 80 Q 200 130 240 80 Q 300 110 310 200 Q 320 280 270 320 Q 200 340 130 320 Q 80 280 90 200 Q 100 110 160 80 Z",
+                fillColor: '#d2b48c',
+                drawInner: (ctx) => {
+                    ctx.strokeStyle = '#2d3436'; ctx.lineWidth = 5; ctx.fillStyle = '#2d3436';
+                    // 左眼眶與瞳孔
+                    ctx.beginPath(); ctx.ellipse(150, 170, 35, 45, 0, 0, Math.PI*2); ctx.stroke();
+                    ctx.beginPath(); ctx.arc(150, 170, 15, 0, Math.PI*2); ctx.fill();
+                    // 右眼眶與瞳孔
+                    ctx.beginPath(); ctx.ellipse(250, 170, 35, 45, 0, 0, Math.PI*2); ctx.stroke();
+                    ctx.beginPath(); ctx.arc(250, 170, 15, 0, Math.PI*2); ctx.fill();
+                    // 嘴巴
+                    ctx.beginPath(); ctx.moveTo(185, 230); ctx.lineTo(215, 230); ctx.lineTo(200, 260); ctx.closePath(); ctx.stroke();
+                    // 胸前羽毛紋路
+                    const drawV = (x, y) => { ctx.beginPath(); ctx.moveTo(x-10, y-10); ctx.lineTo(x, y); ctx.lineTo(x+10, y-10); ctx.stroke(); }
+                    drawV(200, 300); drawV(150, 280); drawV(250, 280);
+                }
             },
             vehicle: {
-                path: "M 60 260 L 60 180 L 120 180 L 160 120 L 260 120 L 300 180 L 340 180 L 340 260 L 290 260 A 25 25 0 0 1 240 260 L 160 260 A 25 25 0 0 1 110 260 Z",
-                color: '#4dabf7' // 汽車的顏色
+                // 汽車外部輪廓
+                path: "M 60 250 L 60 160 L 120 160 L 160 100 L 260 100 L 300 160 L 340 160 L 340 250 Z",
+                fillColor: '#74b9ff',
+                drawInner: (ctx) => {
+                    ctx.strokeStyle = '#2d3436'; ctx.lineWidth = 5; ctx.fillStyle = '#2d3436';
+                    // 輪胎與輪框
+                    ctx.beginPath(); ctx.arc(120, 250, 35, 0, Math.PI*2); ctx.stroke();
+                    ctx.beginPath(); ctx.arc(120, 250, 15, 0, Math.PI*2); ctx.fill();
+                    ctx.beginPath(); ctx.arc(280, 250, 35, 0, Math.PI*2); ctx.stroke();
+                    ctx.beginPath(); ctx.arc(280, 250, 15, 0, Math.PI*2); ctx.fill();
+                    // 窗戶
+                    ctx.beginPath(); ctx.rect(160, 110, 45, 50); ctx.stroke();
+                    ctx.beginPath(); ctx.rect(215, 110, 40, 50); ctx.stroke();
+                    // 車燈
+                    ctx.beginPath(); ctx.rect(320, 180, 20, 15); ctx.stroke();
+                }
             },
             food: {
-                path: "M 200 100 C 250 50 340 60 350 150 C 360 250 280 330 200 350 C 120 330 40 250 50 150 C 60 60 150 50 200 100 Z",
-                color: '#ff6b6b' // 蘋果的顏色
+                // 蘋果外部輪廓
+                path: "M 200 120 C 280 80 340 150 320 250 C 300 320 220 320 200 300 C 180 320 100 320 80 250 C 60 150 120 80 200 120 Z",
+                fillColor: '#ff7675',
+                drawInner: (ctx) => {
+                    ctx.strokeStyle = '#2d3436'; ctx.lineWidth = 5;
+                    // 蘋果梗
+                    ctx.beginPath(); ctx.moveTo(200, 120); ctx.quadraticCurveTo(190, 80, 210, 50); ctx.stroke();
+                    // 葉片
+                    ctx.beginPath(); ctx.ellipse(240, 80, 30, 15, Math.PI/6, 0, Math.PI*2); ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(215, 95); ctx.lineTo(265, 65); ctx.stroke();
+                }
             }
         };
 
         function getLabel(index) {
-            if (gameMode === 'letter') {
-                return String.fromCharCode(65 + index); // A, B, C...
-            }
-            return (index + 1).toString(); // 1, 2, 3...
+            return gameMode === 'letter' ? String.fromCharCode(65 + index) : (index + 1).toString();
         }
 
         function startGame() {
             modal.classList.remove('show');
             const diff = parseInt(document.getElementById('difficulty').value);
-            const themeKey = document.getElementById('theme').value;
+            currentThemeKey = document.getElementById('theme').value;
             gameMode = document.getElementById('mode').value;
-            themeColor = themes[themeKey].color;
 
-            generatePoints(themes[themeKey].path, diff);
+            generatePoints(themes[currentThemeKey].path, diff);
             currentTarget = 0;
             drawGame();
         }
@@ -229,7 +178,6 @@
             const totalLength = pathElement.getTotalLength();
             
             for (let i = 0; i < numPoints; i++) {
-                // 沿著圖案外框平均取點
                 const pt = pathElement.getPointAtLength(i * totalLength / numPoints);
                 points.push({ x: pt.x, y: pt.y });
             }
@@ -238,103 +186,80 @@
         function drawGame() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // 繪製已經連好的線
+            // 1. 如果已完成，先填滿輪廓底色
+            if (currentTarget === points.length) {
+                ctx.beginPath();
+                ctx.moveTo(points[0].x, points[0].y);
+                for (let i = 1; i < points.length; i++) ctx.lineTo(points[i].x, points[i].y);
+                ctx.closePath();
+                ctx.fillStyle = themes[currentThemeKey].fillColor;
+                ctx.fill();
+            }
+
+            // 2. 畫上固定的內部線條特徵
+            themes[currentThemeKey].drawInner(ctx);
+
+            // 3. 繪製玩家連好的線
             if (currentTarget > 0) {
                 ctx.beginPath();
                 ctx.moveTo(points[0].x, points[0].y);
                 for (let i = 1; i <= currentTarget; i++) {
-                    const pt = points[i === points.length ? 0 : i]; // 如果完成，連回原點
+                    const pt = points[i === points.length ? 0 : i];
                     ctx.lineTo(pt.x, pt.y);
                 }
-                ctx.strokeStyle = '#5c4033';
-                ctx.lineWidth = 5;
+                ctx.strokeStyle = '#2d3436';
+                ctx.lineWidth = 6;
                 ctx.lineCap = 'round';
                 ctx.lineJoin = 'round';
                 ctx.stroke();
             }
 
-            // 如果遊戲完成，填滿圖案並畫表情
-            if (currentTarget === points.length) {
-                ctx.fillStyle = themeColor;
-                ctx.fill();
-                drawCuteFace();
-                return;
+            // 4. 繪製尚未連接的黑點與數字標籤 (完成後隱藏)
+            if (currentTarget < points.length) {
+                points.forEach((pt, index) => {
+                    const isTarget = index === currentTarget;
+                    
+                    // 畫點
+                    ctx.beginPath();
+                    ctx.arc(pt.x, pt.y, isTarget ? 8 : 5, 0, Math.PI * 2);
+                    ctx.fillStyle = isTarget ? '#d63031' : '#2d3436';
+                    ctx.fill();
+                    
+                    // 畫標籤 (稍微偏移避免擋住黑點)
+                    ctx.fillStyle = isTarget ? '#d63031' : '#636e72';
+                    ctx.font = isTarget ? '900 20px Nunito' : '700 16px Nunito';
+                    ctx.fillText(getLabel(index), pt.x + 10, pt.y - 10);
+                });
             }
-
-            // 繪製未連接的點與標籤
-            points.forEach((pt, index) => {
-                const isTarget = index === currentTarget;
-                
-                // 畫點
-                ctx.beginPath();
-                ctx.arc(pt.x, pt.y, isTarget ? 10 : 6, 0, Math.PI * 2);
-                ctx.fillStyle = isTarget ? '#ff4757' : '#ced6e0';
-                ctx.fill();
-                
-                // 畫標籤
-                ctx.fillStyle = isTarget ? '#ff4757' : '#747d8c';
-                ctx.font = isTarget ? '900 24px Nunito' : '700 18px Nunito';
-                
-                // 讓文字稍微偏離原點避免重疊
-                ctx.fillText(getLabel(index), pt.x + 12, pt.y - 8);
-            });
-        }
-
-        function drawCuteFace() {
-            // 在圖案正中央畫一個可愛的笑臉
-            const cx = 200, cy = 200;
-            ctx.fillStyle = '#2f3542';
-            // 眼睛
-            ctx.beginPath(); ctx.arc(cx - 30, cy - 10, 8, 0, Math.PI * 2); ctx.fill();
-            ctx.beginPath(); ctx.arc(cx + 30, cy - 10, 8, 0, Math.PI * 2); ctx.fill();
-            // 腮紅
-            ctx.fillStyle = 'rgba(255, 107, 129, 0.6)';
-            ctx.beginPath(); ctx.arc(cx - 45, cy + 5, 10, 0, Math.PI * 2); ctx.fill();
-            ctx.beginPath(); ctx.arc(cx + 45, cy + 5, 10, 0, Math.PI * 2); ctx.fill();
-            // 嘴巴
-            ctx.strokeStyle = '#2f3542';
-            ctx.lineWidth = 4;
-            ctx.beginPath();
-            ctx.arc(cx, cy + 5, 15, 0.2 * Math.PI, 0.8 * Math.PI);
-            ctx.stroke();
         }
 
         function handleInteract(e) {
-            if (currentTarget === points.length) return; // 遊戲已結束
-
-            e.preventDefault(); // 阻止螢幕滾動
+            if (currentTarget === points.length) return;
+            e.preventDefault(); 
             
             const rect = canvas.getBoundingClientRect();
-            // 處理滑鼠與觸控座標
             const clientX = e.touches ? e.touches[0].clientX : e.clientX;
             const clientY = e.touches ? e.touches[0].clientY : e.clientY;
             
-            // 計算縮放比例
-            const scaleX = canvas.width / rect.width;
-            const scaleY = canvas.height / rect.height;
-            
-            const x = (clientX - rect.left) * scaleX;
-            const y = (clientY - rect.top) * scaleY;
+            const x = (clientX - rect.left) * (canvas.width / rect.width);
+            const y = (clientY - rect.top) * (canvas.height / rect.height);
 
             const targetPt = points[currentTarget];
             const dist = Math.hypot(x - targetPt.x, y - targetPt.y);
 
-            // 寬鬆的點擊判定範圍 (半徑 35px 內皆算點中，適合小朋友)
-            if (dist < 35) {
+            // 點擊範圍放寬至 40px，讓小朋友容易點中
+            if (dist < 40) {
                 currentTarget++;
                 drawGame();
-                
                 if (currentTarget === points.length) {
-                    setTimeout(() => modal.classList.add('show'), 400);
+                    setTimeout(() => modal.classList.add('show'), 500);
                 }
             }
         }
 
-        // 綁定事件監聽 (支援滑鼠與手機觸控)
         canvas.addEventListener('mousedown', handleInteract);
         canvas.addEventListener('touchstart', handleInteract, { passive: false });
 
-        // 載入時自動開始
         startGame();
     </script>
 </body>
