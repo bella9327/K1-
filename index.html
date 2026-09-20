@@ -3,100 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>🖨️ 連線學習單產生器</title>
+    <title>🎈 連線遊戲生成器 🎈</title>
     <!-- 引入 jsPDF 用於產生 PDF 檔案 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&family=ZCOOL+KuaiLe&display=swap');
 
         * { box-sizing: border-box; }
 
         body {
             font-family: 'Nunito', 'Microsoft JhengHei', sans-serif;
-            background-color: #eef2f3;
+            background-color: #fff4e6;
+            background-image: radial-gradient(#ffd8a8 2px, transparent 0);
+            background-size: 30px 30px;
             margin: 0; padding: 20px;
             display: flex; flex-direction: column; align-items: center;
-            min-height: 100vh; color: #333;
+            min-height: 100vh; color: #5d4037;
         }
 
-        h1 { font-size: 28px; color: #2c3e50; margin: 0 0 20px 0; text-align: center; }
+        h1 { 
+            font-family: 'ZCOOL KuaiLe', cursive; 
+            font-size: 36px; color: #ff8c42; 
+            margin: 0 0 20px 0; text-align: center;
+            text-shadow: 2px 2px 0px #fff;
+        }
 
         .container {
-            display: flex; flex-wrap: wrap; gap: 30px;
-            width: 100%; max-width: 900px; justify-content: center;
+            display: flex; flex-direction: column; gap: 20px;
+            width: 100%; max-width: 1000px; align-items: center;
         }
 
         .controls-container {
-            background-color: #ffffff; border-radius: 15px; padding: 25px;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.08);
-            display: flex; flex-direction: column; gap: 15px;
-            flex: 1; min-width: 300px; max-width: 400px;
+            background-color: #ffffff; border-radius: 25px; padding: 20px 30px;
+            border: 5px solid #ffdfb3; box-shadow: 0 10px 20px rgba(255, 140, 66, 0.1);
+            display: flex; flex-wrap: wrap; gap: 15px; justify-content: center;
+            width: 100%; align-items: center;
         }
 
-        .control-row { display: flex; justify-content: space-between; align-items: center; font-weight: bold; font-size: 16px;}
-        select { padding: 8px 12px; border-radius: 8px; border: 2px solid #cbd5e1; font-family: inherit; font-weight: bold; font-size: 15px; outline: none; background: #f8fafc;}
+        .control-item { display: flex; align-items: center; gap: 8px; font-weight: 900; font-size: 18px;}
+        select { 
+            padding: 8px 15px; border-radius: 15px; border: 3px solid #ffcc99; 
+            font-family: inherit; font-weight: 900; font-size: 16px; 
+            outline: none; background: #fff9f2; color: #5d4037; cursor: pointer;
+        }
 
         .btn {
-            border: none; padding: 14px; font-size: 18px; font-weight: 900;
-            border-radius: 12px; cursor: pointer; transition: transform 0.1s;
-            margin-top: 10px; color: white;
+            border: none; padding: 12px 20px; font-size: 18px; font-weight: 900;
+            border-radius: 20px; cursor: pointer; transition: transform 0.1s;
+            color: white; font-family: 'Nunito', 'Microsoft JhengHei', sans-serif;
         }
-        .btn-preview { background-color: #3498db; box-shadow: 0 4px 0px #2980b9; }
-        .btn-preview:active { transform: translateY(4px); box-shadow: 0 0px 0px #2980b9; }
-        .btn-download { background-color: #2ecc71; box-shadow: 0 4px 0px #27ae60; margin-top: 0;}
-        .btn-download:active { transform: translateY(4px); box-shadow: 0 0px 0px #27ae60; }
+        .btn-preview { background-color: #4ecdc4; box-shadow: 0 5px 0px #3baba3; margin-left: auto; }
+        .btn-preview:active { transform: translateY(5px); box-shadow: 0 0px 0px #3baba3; }
+        .btn-download { background-color: #ff6b6b; box-shadow: 0 5px 0px #e05252; }
+        .btn-download:active { transform: translateY(5px); box-shadow: 0 0px 0px #e05252; }
 
-        .preview-container {
-            flex: 1; min-width: 300px; max-width: 400px;
-            display: flex; flex-direction: column; gap: 15px; align-items: center;
-        }
+        .preview-container { width: 100%; }
 
-        /* 這個 canvas 是用來畫出高解析度 A4 內容，並透過 CSS 縮小預覽 */
+        /* A4 橫向比例 (1684 x 1190)，透過 CSS 等比例縮小顯示 */
         canvas {
-            width: 100%;
-            background-color: #fff;
-            border: 1px solid #ccc;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            width: 100%; max-width: 1000px; height: auto; aspect-ratio: 1684 / 1190;
+            background-color: #fff; border: 4px dashed #ffcc99; border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
         }
     </style>
 </head>
 <body>
 
-    <h1>🖨️ 連線學習單產生器</h1>
+    <h1>🎈 連線遊戲生成器 🎈</h1>
 
     <div class="container">
         <div class="controls-container">
-            <div class="control-row">
-                <label>🔡 模式：</label>
+            <div class="control-item">
+                <label>🔡</label>
                 <select id="mode">
                     <option value="number">123 數字</option>
                     <option value="letter">ABC 大寫字母</option>
                     <option value="letter_lower">abc 小寫字母</option>
                 </select>
             </div>
-            <div class="control-row">
-                <label>🌟 程度：</label>
+            <div class="control-item">
+                <label>🌟</label>
                 <select id="difficulty">
-                    <option value="10">簡單 (10點內)</option>
-                    <option value="15">普通 (15點內)</option>
-                    <option value="25">困難 (25點以上)</option>
+                    <option value="12">簡單 (12點內)</option>
+                    <option value="20">普通 (20點內)</option>
+                    <option value="30">困難 (30點以上)</option>
                 </select>
             </div>
-            <div class="control-row">
-                <label>🎨 主題 (隨機抽圖)：</label>
+            <div class="control-item">
+                <label>🎨</label>
                 <select id="theme">
-                    <option value="animal">🐻 動物系列</option>
+                    <option value="animal">🐻 動物朋友</option>
                     <option value="vehicle">🚗 交通工具</option>
-                    <option value="food">🍎 食物點心</option>
+                    <option value="food">🍎 美味點心</option>
                 </select>
             </div>
-            <button class="btn btn-preview" onclick="generatePreview()">🎲 隨機抽出一張預覽</button>
-            <button class="btn btn-download" onclick="downloadPDF()">⬇️ 下載 A4 列印版 PDF</button>
+            <button class="btn btn-preview" onclick="generatePreview()">🎲 換一張圖</button>
+            <button class="btn btn-download" onclick="downloadPDF()">⬇️ 下載 A4 橫向 PDF</button>
         </div>
 
         <div class="preview-container">
-            <!-- 實際 A4 尺寸 (300dpi 比例縮放): 1190 x 1684 -->
-            <canvas id="pdfCanvas" width="1190" height="1684"></canvas>
+            <!-- 實際 A4 橫向尺寸 (300dpi): 1684 x 1190 -->
+            <canvas id="pdfCanvas" width="1684" height="1190"></canvas>
         </div>
     </div>
 
@@ -105,22 +112,20 @@
         const ctx = canvas.getContext('2d');
         let currentItem = null;
 
-        // 預設的繪圖設定 (黑白列印風格)
-        const lineColor = '#95a5a6';
-        const dotColor = '#2c3e50';
+        // 可愛風的列印線條顏色 (柔和的深褐色與粉色)
+        const outlineColor = '#a89f91'; 
+        const dotColor = '#5d4037';
 
-        // 擴充的多種圖案資料庫
+        // 圖案資料庫
         const categories = {
             animal: [
                 {
                     name: '貓頭鷹',
                     path: "M 160 80 Q 200 130 240 80 Q 300 110 310 200 Q 320 280 270 320 Q 200 340 130 320 Q 80 280 90 200 Q 100 110 160 80 Z",
                     drawInner: (ctx) => {
-                        ctx.strokeStyle = lineColor; ctx.lineWidth = 4;
                         ctx.beginPath(); ctx.ellipse(150, 170, 35, 45, 0, 0, Math.PI*2); ctx.stroke();
                         ctx.beginPath(); ctx.ellipse(250, 170, 35, 45, 0, 0, Math.PI*2); ctx.stroke();
-                        ctx.beginPath(); ctx.arc(150, 170, 10, 0, Math.PI*2); ctx.fill();
-                        ctx.beginPath(); ctx.arc(250, 170, 10, 0, Math.PI*2); ctx.fill();
+                        ctx.fillStyle = outlineColor; ctx.beginPath(); ctx.arc(150, 170, 10, 0, Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(250, 170, 10, 0, Math.PI*2); ctx.fill();
                         ctx.beginPath(); ctx.moveTo(185, 230); ctx.lineTo(215, 230); ctx.lineTo(200, 260); ctx.closePath(); ctx.stroke();
                     }
                 },
@@ -128,63 +133,42 @@
                     name: '小貓咪',
                     path: "M 100 200 L 120 100 L 180 140 Q 200 130 220 140 L 280 100 L 300 200 Q 320 300 200 320 Q 80 300 100 200 Z",
                     drawInner: (ctx) => {
-                        ctx.strokeStyle = lineColor; ctx.lineWidth = 4;
                         ctx.beginPath(); ctx.arc(160, 200, 12, 0, Math.PI*2); ctx.stroke();
                         ctx.beginPath(); ctx.arc(240, 200, 12, 0, Math.PI*2); ctx.stroke();
                         ctx.beginPath(); ctx.moveTo(190, 230); ctx.lineTo(210, 230); ctx.lineTo(200, 245); ctx.closePath(); ctx.stroke();
-                        // 鬍鬚
-                        ctx.beginPath(); ctx.moveTo(140, 230); ctx.lineTo(90, 220); ctx.stroke();
-                        ctx.beginPath(); ctx.moveTo(140, 240); ctx.lineTo(90, 250); ctx.stroke();
-                        ctx.beginPath(); ctx.moveTo(260, 230); ctx.lineTo(310, 220); ctx.stroke();
-                        ctx.beginPath(); ctx.moveTo(260, 240); ctx.lineTo(310, 250); ctx.stroke();
+                        ctx.beginPath(); ctx.moveTo(140, 230); ctx.lineTo(90, 220); ctx.stroke(); ctx.beginPath(); ctx.moveTo(140, 240); ctx.lineTo(90, 250); ctx.stroke();
+                        ctx.beginPath(); ctx.moveTo(260, 230); ctx.lineTo(310, 220); ctx.stroke(); ctx.beginPath(); ctx.moveTo(260, 240); ctx.lineTo(310, 250); ctx.stroke();
                     }
                 },
                 {
-                    name: '小魚',
+                    name: '可愛小魚',
                     path: "M 120 200 Q 160 100 260 150 L 320 100 L 300 200 L 320 300 L 260 250 Q 160 300 120 200 Z",
                     drawInner: (ctx) => {
-                        ctx.strokeStyle = lineColor; ctx.lineWidth = 4;
-                        ctx.beginPath(); ctx.arc(170, 180, 10, 0, Math.PI*2); ctx.stroke();
-                        ctx.beginPath(); ctx.arc(170, 180, 4, 0, Math.PI*2); ctx.fill();
-                        ctx.beginPath(); ctx.arc(170, 220, 20, 0.2*Math.PI, 0.8*Math.PI); ctx.stroke();
+                        ctx.beginPath(); ctx.arc(170, 180, 15, 0, Math.PI*2); ctx.stroke();
+                        ctx.fillStyle = outlineColor; ctx.beginPath(); ctx.arc(170, 180, 6, 0, Math.PI*2); ctx.fill();
+                        ctx.beginPath(); ctx.arc(170, 220, 15, 0.2*Math.PI, 0.8*Math.PI); ctx.stroke();
                         ctx.beginPath(); ctx.moveTo(220, 145); ctx.lineTo(240, 100); ctx.lineTo(250, 155); ctx.stroke();
                     }
                 }
             ],
             vehicle: [
                 {
-                    name: '小汽車',
+                    name: '噗噗小汽車',
                     path: "M 60 250 L 60 160 L 120 160 L 160 100 L 260 100 L 300 160 L 340 160 L 340 250 Z",
                     drawInner: (ctx) => {
-                        ctx.strokeStyle = lineColor; ctx.lineWidth = 4;
-                        ctx.beginPath(); ctx.arc(120, 250, 30, 0, Math.PI*2); ctx.stroke();
-                        ctx.beginPath(); ctx.arc(120, 250, 10, 0, Math.PI*2); ctx.stroke();
-                        ctx.beginPath(); ctx.arc(280, 250, 30, 0, Math.PI*2); ctx.stroke();
-                        ctx.beginPath(); ctx.arc(280, 250, 10, 0, Math.PI*2); ctx.stroke();
-                        ctx.beginPath(); ctx.rect(160, 110, 45, 50); ctx.stroke();
-                        ctx.beginPath(); ctx.rect(215, 110, 40, 50); ctx.stroke();
+                        ctx.beginPath(); ctx.arc(120, 250, 30, 0, Math.PI*2); ctx.stroke(); ctx.beginPath(); ctx.arc(120, 250, 10, 0, Math.PI*2); ctx.stroke();
+                        ctx.beginPath(); ctx.arc(280, 250, 30, 0, Math.PI*2); ctx.stroke(); ctx.beginPath(); ctx.arc(280, 250, 10, 0, Math.PI*2); ctx.stroke();
+                        ctx.beginPath(); ctx.rect(160, 110, 45, 50); ctx.stroke(); ctx.beginPath(); ctx.rect(215, 110, 40, 50); ctx.stroke();
                     }
                 },
                 {
-                    name: '太空火箭',
+                    name: '飛天火箭',
                     path: "M 200 60 Q 240 120 260 240 L 300 280 L 260 280 L 200 320 L 140 280 L 100 280 L 140 240 Q 160 120 200 60 Z",
                     drawInner: (ctx) => {
-                        ctx.strokeStyle = lineColor; ctx.lineWidth = 4;
                         ctx.beginPath(); ctx.arc(200, 160, 25, 0, Math.PI*2); ctx.stroke();
                         ctx.beginPath(); ctx.moveTo(200, 100); ctx.lineTo(200, 120); ctx.stroke();
                         ctx.beginPath(); ctx.moveTo(160, 240); ctx.lineTo(240, 240); ctx.stroke();
-                        // 火焰
                         ctx.beginPath(); ctx.moveTo(160, 320); ctx.lineTo(180, 360); ctx.lineTo(200, 340); ctx.lineTo(220, 360); ctx.lineTo(240, 320); ctx.stroke();
-                    }
-                },
-                {
-                    name: '帆船',
-                    path: "M 200 80 L 280 220 L 320 220 L 260 280 L 140 280 L 80 220 L 120 220 Z",
-                    drawInner: (ctx) => {
-                        ctx.strokeStyle = lineColor; ctx.lineWidth = 4;
-                        ctx.beginPath(); ctx.moveTo(200, 80); ctx.lineTo(200, 280); ctx.stroke();
-                        ctx.beginPath(); ctx.moveTo(140, 280); ctx.lineTo(260, 280); ctx.stroke();
-                        ctx.beginPath(); ctx.moveTo(200, 100); ctx.lineTo(130, 210); ctx.lineTo(200, 210); ctx.stroke();
                     }
                 }
             ],
@@ -193,48 +177,28 @@
                     name: '大蘋果',
                     path: "M 200 120 C 280 80 340 150 320 250 C 300 320 220 320 200 300 C 180 320 100 320 80 250 C 60 150 120 80 200 120 Z",
                     drawInner: (ctx) => {
-                        ctx.strokeStyle = lineColor; ctx.lineWidth = 4;
                         ctx.beginPath(); ctx.moveTo(200, 120); ctx.quadraticCurveTo(190, 80, 210, 50); ctx.stroke();
                         ctx.beginPath(); ctx.ellipse(240, 80, 30, 15, Math.PI/6, 0, Math.PI*2); ctx.stroke();
                     }
                 },
                 {
-                    name: '冰淇淋',
+                    name: '冰淇淋甜筒',
                     path: "M 140 160 Q 140 80 200 80 Q 260 80 260 160 L 280 180 L 200 340 L 120 180 Z",
                     drawInner: (ctx) => {
-                        ctx.strokeStyle = lineColor; ctx.lineWidth = 4;
-                        // 甜筒格紋
-                        ctx.beginPath(); ctx.moveTo(140, 220); ctx.lineTo(240, 280); ctx.stroke();
-                        ctx.beginPath(); ctx.moveTo(160, 200); ctx.lineTo(260, 260); ctx.stroke();
-                        ctx.beginPath(); ctx.moveTo(260, 220); ctx.lineTo(160, 280); ctx.stroke();
-                        ctx.beginPath(); ctx.moveTo(240, 200); ctx.lineTo(140, 260); ctx.stroke();
-                        ctx.beginPath(); ctx.arc(200, 140, 15, 0, Math.PI, true); ctx.stroke(); // 櫻桃
-                    }
-                },
-                {
-                    name: '杯子蛋糕',
-                    path: "M 140 260 L 160 340 L 240 340 L 260 260 Q 300 240 280 180 Q 290 120 240 120 Q 220 80 180 120 Q 120 120 120 180 Q 100 240 140 260 Z",
-                    drawInner: (ctx) => {
-                        ctx.strokeStyle = lineColor; ctx.lineWidth = 4;
-                        // 杯子皺褶
-                        ctx.beginPath(); ctx.moveTo(180, 260); ctx.lineTo(190, 340); ctx.stroke();
-                        ctx.beginPath(); ctx.moveTo(220, 260); ctx.lineTo(210, 340); ctx.stroke();
-                        // 頂部裝飾點綴
-                        ctx.beginPath(); ctx.arc(170, 160, 4, 0, Math.PI*2); ctx.fill();
-                        ctx.beginPath(); ctx.arc(220, 190, 4, 0, Math.PI*2); ctx.fill();
-                        ctx.beginPath(); ctx.arc(240, 150, 4, 0, Math.PI*2); ctx.fill();
+                        ctx.beginPath(); ctx.moveTo(140, 220); ctx.lineTo(240, 280); ctx.stroke(); ctx.beginPath(); ctx.moveTo(160, 200); ctx.lineTo(260, 260); ctx.stroke();
+                        ctx.beginPath(); ctx.moveTo(260, 220); ctx.lineTo(160, 280); ctx.stroke(); ctx.beginPath(); ctx.moveTo(240, 200); ctx.lineTo(140, 260); ctx.stroke();
+                        ctx.beginPath(); ctx.arc(200, 140, 15, 0, Math.PI, true); ctx.stroke();
                     }
                 }
             ]
         };
 
         function getLabel(index, mode) {
-            if (mode === 'letter') return String.fromCharCode(65 + index); // A, B, C
-            if (mode === 'letter_lower') return String.fromCharCode(97 + index); // a, b, c
-            return (index + 1).toString(); // 1, 2, 3
+            if (mode === 'letter') return String.fromCharCode(65 + index);
+            if (mode === 'letter_lower') return String.fromCharCode(97 + index);
+            return (index + 1).toString();
         }
 
-        // 沿著 SVG 路徑平均取點
         function getPointsFromPath(pathString, numPoints) {
             const points = [];
             const pathElement = document.createElementNS('http://www.w3.org/2000/svg', 'path');
@@ -252,7 +216,6 @@
             const themeKey = document.getElementById('theme').value;
             const mode = document.getElementById('mode').value;
 
-            // 從所選分類中「隨機」挑選一個圖案
             const themeList = categories[themeKey];
             currentItem = themeList[Math.floor(Math.random() * themeList.length)];
 
@@ -260,54 +223,71 @@
         }
 
         function drawWorksheet(item, numPoints, mode) {
+            // 背景塗白 (PDF 列印需求)
             ctx.fillStyle = '#ffffff';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // === 繪製學習單標題與填寫欄位 ===
-            ctx.fillStyle = '#2c3e50';
-            ctx.font = 'bold 50px Microsoft JhengHei, Nunito, sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillText(`✏️ 連線畫冊：${item.name} ✏️`, canvas.width / 2, 120);
-            
-            ctx.font = 'bold 30px Microsoft JhengHei';
-            ctx.textAlign = 'left';
-            ctx.fillText(`姓名：_________________`, 100, 220);
-            ctx.fillText(`日期：______月______日`, 700, 220);
-            
-            ctx.lineWidth = 3;
-            ctx.strokeStyle = '#bdc3c7';
-            ctx.beginPath(); ctx.moveTo(50, 260); ctx.lineTo(1140, 260); ctx.stroke();
+            // --- 繪製可愛虛線外框 ---
+            ctx.strokeStyle = '#ffdfb3';
+            ctx.lineWidth = 15;
+            ctx.setLineDash([30, 25]);
+            ctx.lineCap = 'round';
+            ctx.strokeRect(50, 50, canvas.width - 100, canvas.height - 100);
+            ctx.setLineDash([]); // 恢復實線
 
-            // === 繪製中心圖案與點點 ===
+            // --- 繪製標題與填寫欄位 ---
+            // 使用童趣圓體字型
+            ctx.fillStyle = '#ff8c42';
+            ctx.font = 'bold 70px "Comic Sans MS", "ZCOOL KuaiLe", "Microsoft JhengHei", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(`✨ 歡樂連線：${item.name} ✨`, canvas.width / 2, 160);
+            
+            ctx.fillStyle = '#5d4037';
+            ctx.font = 'bold 36px "Comic Sans MS", "Microsoft JhengHei", sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText(`姓名：_________________`, 150, 280);
+            
+            ctx.textAlign = 'right';
+            ctx.fillText(`日期：______月______日`, canvas.width - 150, 280);
+            
+            ctx.lineWidth = 4;
+            ctx.strokeStyle = '#f3e5f5';
+            ctx.beginPath(); ctx.moveTo(100, 320); ctx.lineTo(canvas.width - 100, 320); ctx.stroke();
+
+            // --- 繪製連線圖案 ---
             const points = getPointsFromPath(item.path, numPoints);
 
             ctx.save();
-            // 由於原圖座標是在 400x400，這裡將其放大並移至畫布中央
-            const scale = 2.2;
+            // 放寬橫向空間：設定縮放比例為 2.1 倍
+            const scale = 2.1;
             const offsetX = (canvas.width - 400 * scale) / 2;
-            const offsetY = 400;
+            const offsetY = 330; 
             ctx.translate(offsetX, offsetY);
             ctx.scale(scale, scale);
 
-            // 1. 畫內部提示線 (黑灰底稿)
-            ctx.fillStyle = lineColor;
+            // 1. 畫可愛內部特徵 (圓滑線條)
+            ctx.strokeStyle = outlineColor;
+            ctx.lineWidth = 5;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
             item.drawInner(ctx);
 
-            // 2. 畫連線的點與標籤
+            // 2. 畫連線的點與圓潤標籤
             points.forEach((pt, index) => {
-                // 畫點
+                // 畫可愛圓點
                 ctx.beginPath();
-                ctx.arc(pt.x, pt.y, 4, 0, Math.PI * 2);
+                ctx.arc(pt.x, pt.y, 5, 0, Math.PI * 2);
                 ctx.fillStyle = dotColor;
                 ctx.fill();
                 
                 // 畫標題
-                ctx.font = 'bold 16px Nunito, Arial';
-                // 讓文字些微往外擴，避免與點重疊
+                ctx.font = '900 18px "Nunito", "Comic Sans MS", sans-serif';
+                ctx.fillStyle = dotColor;
+                // 將文字稍微往外推
                 const centerX = 200, centerY = 200;
                 const angle = Math.atan2(pt.y - centerY, pt.x - centerX);
-                const textX = pt.x + Math.cos(angle) * 14;
-                const textY = pt.y + Math.sin(angle) * 14 + 6; // +6 是為了文字基線微調
+                const textX = pt.x + Math.cos(angle) * 16;
+                const textY = pt.y + Math.sin(angle) * 16 + 6;
                 
                 ctx.textAlign = 'center';
                 ctx.fillText(getLabel(index, mode), textX, textY);
@@ -316,27 +296,23 @@
             ctx.restore();
         }
 
-        // 利用 jsPDF 將 Canvas 轉換為 A4 PDF 並下載
+        // jsPDF 下載 (A4 橫向)
         function downloadPDF() {
-            if (!currentItem) {
-                alert("請先點擊「隨機抽出一張預覽」產生內容！");
-                return;
-            }
+            if (!currentItem) return;
             
             const { jsPDF } = window.jspdf;
-            // 建立 A4 直式文件 (單位: 點 pt)
-            const pdf = new jsPDF('p', 'pt', 'a4');
+            // 'l' 代表 landscape (橫向)，單位 pt，尺寸 A4
+            const pdf = new jsPDF('l', 'pt', 'a4');
             
-            // 將畫布轉為高品質圖片
             const imgData = canvas.toDataURL('image/jpeg', 1.0);
             
-            // A4 尺寸的 pt 大小約為 595.28 x 841.89
-            pdf.addImage(imgData, 'JPEG', 0, 0, 595.28, 841.89);
-            pdf.save(`連線學習單_${currentItem.name}.pdf`);
+            // A4 橫向尺寸約為 841.89 x 595.28 pt
+            pdf.addImage(imgData, 'JPEG', 0, 0, 841.89, 595.28);
+            pdf.save(`可愛連線學習單_${currentItem.name}.pdf`);
         }
 
-        // 網頁載入時自動先產生一張
-        window.onload = generatePreview;
+        // 載入字體需要一點時間，設定微小延遲確保字體載入後再繪製
+        window.onload = () => setTimeout(generatePreview, 300);
     </script>
 </body>
 </html>
